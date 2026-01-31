@@ -1,0 +1,102 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background-color: #121212;
+  color: #fff;
+  font-family: 'Pretendard', sans-serif;
+  overscroll-behavior: none;
+}
+
+/* 헤더 */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; height: 50px;
+  background-color: #121212; border-bottom: 1px solid #333;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 20px; z-index: 100;
+}
+.logo { font-size: 24px; cursor: pointer; }
+.nav-switch { font-size: 22px; color: #777; margin-left: 404px; }
+.lets-talk { font-size: 22px; cursor: pointer; }
+
+/* 레이아웃 */
+.detail-container { padding-top: 50px; width: 100%; min-height: 100vh; }
+.main-body { display: flex; width: 100%; }
+
+/* [왼쪽] 패널 */
+.left-panel {
+  width: 70%;
+  border-right: 1px solid #333;
+  padding: 0 10px;
+}
+
+/* 🔥 이미지 블록 - 원본 비율 유지 */
+.img-block {
+  width: 100%;
+  height: auto; /* 고정 높이 제거! */
+  display: block;
+  margin-bottom: 20px;
+  pointer-events: none; /* 클릭 방지 */
+  user-select: none; /* 드래그 방지 */
+}
+
+/* 마지막 이미지 블록은 아래 여백 제거 */
+.img-block:last-child {
+  margin-bottom: 0;
+}
+
+/* [오른쪽] 패널 */
+.right-panel {
+  width: 30%;
+  min-width: 320px;
+  height: calc(100vh - 50px);
+  position: sticky;
+  top: 50px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- [오른쪽 텍스트 스타일] --- */
+.txt-content { width: 100%; }
+
+/* 1. 제목 */
+.project-title {
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+/* 2. 설명글 */
+.project-desc {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #ddd;
+  margin-bottom: 30px;
+  word-break: keep-all;
+  white-space: pre-wrap;
+}
+
+/* 3. 메타 정보 */
+.meta-info { margin-top: auto; }
+
+.meta-row {
+  display: flex;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #f1f1f1;
+}
+
+.meta-label {
+  display: inline-block;
+  width: 80px;
+  color: #f1f1f1;
+  font-weight: 300;
+}
+
+.meta-value {
+  color: #ccc;
+  font-weight: 400;
+}
