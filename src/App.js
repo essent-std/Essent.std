@@ -289,6 +289,7 @@ function MainPage() {
                   type="text" name="name" 
                   value={form.name} onChange={handleInput} 
                   className="form-input" 
+                  autoComplete="off"
                 />
                 {errors.name && <p className="error-text">{errors.name}</p>}
               </div>
@@ -308,7 +309,8 @@ function MainPage() {
                 <input 
                   type="email" name="email" 
                   value={form.email} onChange={handleInput}
-                  className="form-input" 
+                  className="form-input"
+                  autoComplete="off"
                 />
                 {errors.email && <p className="error-text">{errors.email}</p>}
               </div>
