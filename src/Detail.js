@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db, auth } from './firebase'; // auth 추가 (로그인 확인용)
-import { onAuthStateChanged } from 'firebase/auth'; // 로그인 감지
+import { db, auth } from './firebase'; 
+import { onAuthStateChanged } from 'firebase/auth'; 
 import './Detail.css';
 
 function Detail() {
@@ -10,7 +10,7 @@ function Detail() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // ☁️ Cloudinary 설정 (Upload.js와 똑같이 입력하세요!)
+  // ☁️ Cloudinary 설정 (기존 설정 유지)
   const CLOUD_NAME = "dcy83vtu9"; 
   const UPLOAD_PRESET = "portfolio_preset";
 
@@ -22,11 +22,15 @@ function Detail() {
   // 🔐 관리자 로그인 상태 확인
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // 🆕 동영상인지 확인하는 함수 (확장자 체크)
+  const isVideo = (url) => {
+    return url && url.match(/\.(mp4|webm|ogg|mov)$/i);
+  };
+
   useEffect(() => {
-    // 로그인했는지 감시
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setIsAdmin(true); // 로그인했으면 관리자 권한 부여
+        setIsAdmin(true); 
       } else {
         setIsAdmin(false);
       }
@@ -66,7 +70,7 @@ function Detail() {
     setSelectedFiles(files);
   };
 
-  // ☁️ Cloudinary 업로드 함수
+  // ☁️ Cloudinary 업로드 함수 (동영상 지원 수정)
   const handleUpload = async () => {
     if (selectedFiles.length === 0) {
       alert('파일을 선택해주세요.');
@@ -84,7 +88,7 @@ function Detail() {
         formData.append('upload_preset', UPLOAD_PRESET);
 
         const response = await fetch(
-          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, // 👈 auto/upload 로 변경 (비디오 지원)
           {
             method: 'POST',
             body: formData,
@@ -92,14 +96,13 @@ function Detail() {
         );
 
         const data = await response.json();
-        console.log("업로드 된 주소:", data.secure_url); // 확인용 로그
+        console.log("업로드 된 주소:", data.secure_url); 
         uploadedUrls.push(data.secure_url);
       }
 
-      // 2. Firestore에 이미지 주소 추가 (기존 이미지 + 새 이미지)
+      // 2. Firestore에 이미지/영상 주소 추가
       const docRef = doc(db, 'projects', project.id);
       
-      // 기존 subImages가 없으면 빈 배열로 시작
       const currentSubImages = project.subImages || []; 
       const newSubImages = [...currentSubImages, ...uploadedUrls];
       
@@ -107,7 +110,7 @@ function Detail() {
         subImages: newSubImages
       });
 
-      alert('상세 이미지 추가 완료! 🎉');
+      alert('상세 파일 추가 완료! 🎉');
       
       // 3. 화면 즉시 업데이트
       setProject(prev => ({
@@ -115,7 +118,7 @@ function Detail() {
         subImages: newSubImages
       }));
       
-      setSelectedFiles([]); // 파일 선택 초기화
+      setSelectedFiles([]); 
 
     } catch (error) {
       console.error('업로드 실패:', error);
@@ -128,33 +131,55 @@ function Detail() {
   if (loading) return <div className="detail-container">로딩 중...</div>;
   if (!project) return null;
 
+  // 썸네일이나 메인 이미지가 없을 경우를 대비한 변수 처리
+  const mainImage = project.thumbnail || project.imageUrl;
+
   return (
     <div className="detail-container">
       <header className="header">
         <div className="logo" onClick={() => navigate('/')} style={{cursor: 'pointer'}}>ESSENT.STUDIO</div>
-        {/* 네비게이션 등등... */}
       </header>
 
       <div className="main-body">
         <main className="left-panel">
-          {/* 1. 메인 이미지 */}
-          {project.imageUrl && (
-            <img src={project.imageUrl} alt="Main" className="img-block" />
+          {/* 1. 메인 이미지 (또는 동영상) */}
+          {mainImage && (
+            <div className="media-wrapper">
+              {isVideo(mainImage) ? (
+                <video 
+                  src={mainImage} 
+                  className="img-block" 
+                  controls autoPlay muted loop playsInline 
+                />
+              ) : (
+                <img src={mainImage} alt="Main" className="img-block" />
+              )}
+            </div>
           )}
 
-          {/* 2. 상세 이미지들 (subImages) */}
+          {/* 2. 상세 이미지들 (또는 동영상) */}
           {project.subImages && project.subImages.map((imgUrl, idx) => (
-            <img key={idx} src={imgUrl} alt={`Sub ${idx}`} className="img-block" />
+            <div key={idx} className="media-wrapper">
+              {isVideo(imgUrl) ? (
+                <video 
+                  src={imgUrl} 
+                  className="img-block" 
+                  controls autoPlay muted loop playsInline 
+                />
+              ) : (
+                <img src={imgUrl} alt={`Sub ${idx}`} className="img-block" />
+              )}
+            </div>
           ))}
 
           {/* 📸 관리자만 보이는 업로드 구역 */}
           {isAdmin && (
             <div className="admin-upload-section" style={{ marginTop: '30px', padding: '20px', border: '1px dashed #666', borderRadius: '8px' }}>
-              <h4 style={{color: '#fff', marginBottom: '10px'}}>📸 상세 이미지 추가 (관리자용)</h4>
+              <h4 style={{color: '#fff', marginBottom: '10px'}}>📸 상세 파일 추가 (이미지 & 동영상)</h4>
               <input 
                 type="file" 
                 multiple 
-                accept="image/*"
+                accept="image/*, video/*" // 👈 비디오 선택 허용
                 onChange={handleFileSelect}
                 style={{color: '#fff', marginBottom: '10px'}}
               />
@@ -171,7 +196,7 @@ function Detail() {
                     cursor: 'pointer'
                   }}
                 >
-                  {uploading ? '업로드 중...' : '추가하기'}
+                  {uploading ? '업로드 중... (영상은 오래 걸릴 수 있음)' : '추가하기'}
                 </button>
               )}
             </div>
@@ -181,8 +206,17 @@ function Detail() {
         <aside className="right-panel">
           <div className="txt-content">
             <h1 className="project-title">{project.title}</h1>
-            <p className="project-desc">{project.desc}</p>
-            {/* 메타 정보 등등... */}
+            <p className="project-subtitle" style={{color:'#888', marginBottom:'20px'}}>{project.sub}</p>
+            
+            <div className="project-meta" style={{marginBottom:'30px', fontSize:'14px', color:'#ccc'}}>
+              <p>Date : {project.date}</p>
+              <p>Role : {project.role}</p>
+              <p>Client : {project.client}</p>
+            </div>
+
+            <p className="project-desc" style={{whiteSpace: 'pre-line'}}>
+              {project.desc}
+            </p>
           </div>
         </aside>
       </div>
