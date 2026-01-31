@@ -7,6 +7,7 @@
   import Upload from './Upload';
   import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
   import { db } from './firebase';  
+  import Login from './Login';
 
 function MainPage() {
   const navigate = useNavigate();
@@ -324,7 +325,7 @@ function App() {
     <Routes>
       <Route path="/" element={<MainPage />} />
       <Route path="/project/:id" element={<Detail />} />
-      
+      <Route path="/login" element={<Login />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/upload" element={<Upload />} />
     </Routes>

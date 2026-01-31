@@ -1,26 +1,21 @@
-// src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";       // 로그인 기능 추가
+import { getFirestore } from "firebase/firestore"; // 데이터베이스 기능 추가
 
-// ⚠️ 아래 firebaseConfig 내용을 아까 콘솔에서 본인의 것으로 바꿔치기 하세요!
+// 님께서 가져오신 새 열쇠들입니다!
 const firebaseConfig = {
-  apiKey: "AIzaSyCpje9SyErU9ubTb3mQcISLbaGbl7g70JY",
-  authDomain: "essent-admin-6605e.firebaseapp.com",
-  projectId: "essent-admin-6605e",
-  storageBucket: "essent-admin-6605e.firebasestorage.app",
-  messagingSenderId: "614009990980",
-  appId: "1:614009990980:web:00314a8e17db7a7489f111"
+  apiKey: "AIzaSyCYvxrbPP9f49DlxNcYJXyYywJ54N-bnyw",
+  authDomain: "essent-studio.firebaseapp.com",
+  projectId: "essent-studio",
+  storageBucket: "essent-studio.firebasestorage.app",
+  messagingSenderId: "198995652116",
+  appId: "1:198995652116:web:c0ce2e5a1b2f920f24c101"
 };
 
-
-// 파이어베이스 초기화
+// 파이어베이스 시작!
 const app = initializeApp(firebaseConfig);
 
-// 우리가 쓸 기능들 내보내기
-export const db = getFirestore(app);       // 데이터베이스 (글 저장)
-export const auth = getAuth(app);          // 인증 (로그인)
-export const storage = getStorage(app);    // 스토리지 (이미지 저장)
-
+// 다른 파일에서 쓸 수 있게 내보내기 (이게 꼭 있어야 합니다!)
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 export default app;
